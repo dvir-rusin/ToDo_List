@@ -17,6 +17,8 @@ The application includes the following features:
 
 - Setting a due date for tasks
 
+- When completing a task, save the time and date of completion.
+
 While creating the application, the following points were taken into account:
 The application should look usable and have a decent user experience (UI/UX).
 Maintain clean code and a good project structure, improving over time.
@@ -26,8 +28,6 @@ Maintain clean code and a good project structure, improving over time.
 - Sub - tasks
 
 - Option to mark tasks and sub-tasks as unfinished.
-
-- When completing a task, save the time and date of completion.
 
 - marking tasks as overdue when the due date has passed.
 
