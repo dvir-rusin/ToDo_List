@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ToDo_List2.MainPage">
+
+    <ScrollView>
+        <StackLayout Padding="20">
+            <Label Text="To-Do List"
+                   FontSize="Large"
+                   HorizontalOptions="Center" />
+
+            <Entry x:Name="TitleEntry" Placeholder="Enter title" />
+
+            <DatePicker x:Name="DeadlinePicker" />
+
+            <Picker x:Name="PriorityPicker" Title="Select Priority">
+                <Picker.ItemsSource>
+                    <x:Array Type="{x:Type x:String}">
+                        <x:String>Low</x:String>
+                        <x:String>Mid</x:String>
+                        <x:String>High</x:String>
+                    </x:Array>
+                </Picker.ItemsSource>
+            </Picker>
+
+            <Button Text="Add Task" Clicked="OnAddTaskClicked" FontAttributes="Bold" />
+            
+
+
+            <Label Text="Tasks"
+                   FontSize="Medium"
+                   HorizontalOptions="Center" />
+
+            <CollectionView x:Name="TasksCollectionView" ItemsSource="{Binding Task}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Gray" Margin="4" >
+                            <Frame.Triggers>
+                                <DataTrigger TargetType="Frame" Binding="{Binding PRIORITY}" Value="Low">
+                                    <Setter Property="BackgroundColor" Value="Yellow" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Frame" Binding="{Binding PRIORITY}" Value="Mid">
+                                    <Setter Property="BackgroundColor" Value="Orange" />
+                                </DataTrigger>
+                                <DataTrigger TargetType="Frame" Binding="{Binding PRIORITY}" Value="High">
+                                    <Setter Property="BackgroundColor" Value="Red" />
+                                </DataTrigger>
+                            </Frame.Triggers>
+                            <StackLayout>
+                                <Label Text="{Binding TITLE}" FontAttributes="Bold" TextColor="Black" />
+                                <Label Text="{Binding DEADLINE, StringFormat='Deadline: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="{Binding PRIORITY, StringFormat='Priority: {0}'}" FontAttributes="Bold" TextColor="Black" />
+                                <Button Text="Delete" Clicked="OnDeleteTaskClicked" CommandParameter="{Binding .}" />
+                                <Button Text="finished" Clicked="OnFinishTaskClicked" CommandParameter="{Binding .}" />
+                                <Button Text="edit" Clicked="OnEditTaskClicked" CommandParameter="{Binding .}" />
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Label Text="Finished Tasks"
+                   FontSize="Medium"
+                   HorizontalOptions="Center" />
+
+            <CollectionView x:Name="FinishedTasksCollectionView" ItemsSource="{Binding FinishedTasks}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Frame BorderColor="Gray" Margin="4" BackgroundColor="green">
+                            <StackLayout>
+                                <Label Text="{Binding TITLE}" FontAttributes="Bold" TextColor="Black" />
+                                <Label Text="{Binding DEADLINE, StringFormat='Deadline: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="{Binding PRIORITY, StringFormat='Priority: {0}'}" FontAttributes="Bold" TextColor="Black" />
+                                <Button Text="Delete" Clicked="OnDeleteTaskClicked" CommandParameter="{Binding .}" />
+                                <Button Text="UnFinish" Clicked="OnUnfinishTaskClicked" CommandParameter="{Binding .}" />
+                                <Button Text="edit" Clicked="OnEditTaskClicked" CommandParameter="{Binding .}" />
+                        
+                            </StackLayout>
+                        </Frame>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </StackLayout>
+    </ScrollView>
+</ContentPage>
