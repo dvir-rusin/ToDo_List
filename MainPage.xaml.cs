@@ -11,13 +11,13 @@ namespace ToDo_List2
 {
     public partial class MainPage : ContentPage
     {
-
+        //RELATED TO USER SAVING
         private UserProfile currentUserProfile;
         private string currentUsername;
 
-        private int counter = 0;
-        public ObservableCollection<TaskItem> Tasks { get; set; }
-        public ObservableCollection<TaskItem> FinishedTasks { get; set; }
+        private int counter = 0;// COUNTS TASKS AND ACTS AS ID
+        public ObservableCollection<TaskItem> Tasks { get; set; }//UNFINISHED TASKS LIST
+        public ObservableCollection<TaskItem> FinishedTasks { get; set; }//FINISHED TASKS LIST
 
         CollectionView collectionView = new CollectionView();
         
@@ -25,7 +25,11 @@ namespace ToDo_List2
 
         {
             
+        public MainPage()
             
+        {
+            var button = new Button();
+            var task = new TaskItem();
             InitializeComponent();
 
             Tasks = new ObservableCollection<TaskItem>();
@@ -154,48 +158,43 @@ namespace ToDo_List2
             }
         }
 
-        private void OnFinishTaskClicked(object sender, EventArgs e)//task finished
-        {//remove task from tasks, add into finishedtasks
-            var button = (Button)sender;
-            var task = (TaskItem)button.CommandParameter;
-            Tasks.Remove(task);
-            task.ISDONE = true;//change done state to true
-            FinishedTasks.Add(task);
+        private void UpdateTaskStatus(TaskItem task, bool isFinished)
+        {
+            if (task == null) return;
 
 
-            //go over the tasks in Tasks
-            if (task.ISDONE == false)
-            {
-                foreach (TaskItem task2 in Tasks)
-                {
-                    if (task2.ID == task.ID)
+            if (isFinished)
                     {
+                Tasks.Remove(task);
+                task.ISDONE = true;
                         task.SUBMISSIONDATE = DateTime.Now;
+                task.SUBMISSION_STATUS = task.SUBMISSIONDATE > task.DEADLINE ? "OVERDUE" : "ON TIME";
+                FinishedTasks.Add(task);
                     }
+            else
+            {
+                FinishedTasks.Remove(task);
+                task.ISDONE = false;
+                task.SUBMISSIONDATE = default;
+                task.SUBMISSION_STATUS = "NONE";
+                Tasks.Add(task);
                 }
+
+            SaveCurrentUserProfile();
             }
       
-            //go over the tasks in FinishedTasks(they are all done)
-            if (task.ISDONE)
-            {
-                foreach (TaskItem task2 in FinishedTasks)
-                {
-                    if (task2.ID == task.ID)
+        private void OnFinishTaskClicked(object sender, EventArgs e)
                     {
-                        task.SUBMISSIONDATE = DateTime.Now;
-        }
-                }
-            }
+            var button = (Button)sender;
+            var task = (TaskItem)button.CommandParameter;
+            UpdateTaskStatus(task, true);
         }
 
-        private void OnUnfinishTaskClicked(object sender, EventArgs e)//remove task from finshedtasks, add into tasks
+        private void OnUnfinishTaskClicked(object sender, EventArgs e)
         {
             var button = (Button)sender;
-            var task = (TaskItem)button?.CommandParameter;  
-           FinishedTasks.Remove(task);
-           task.ISDONE = false;//change the done state back
-            Tasks.Add(task);
-            task.SUBMISSIONDATE = default(DateTime);   
+            var task = (TaskItem)button.CommandParameter;
+            UpdateTaskStatus(task, false);
         }
 
 
@@ -242,7 +241,172 @@ namespace ToDo_List2
             PriorityPicker.SelectedItem = null;
         }
 
+
+
+        //USER TASKS SAVING RELATED -------------------------------------------------↓↓↓   
+
+
+
+
         
+        //Description: LoadLastUser() function
+
+        //The LoadLastUser method is responsible for retrieving the last user who used the 
+        //application and loading their profile along with their tasks. It first attempts to load the 
+        //username of the last user. If a username is found, it loads the corresponding user profile. If 
+        //the profile does not exist, it creates a new user profile with the retrieved username. If no 
+        //username is found, it initializes a new user profile and empty task collections. The method 
+        //then updates the item sources for the task collection views and sets the binding context to 
+        //ensure the UI reflects the current data.
+
+
+
+        private void LoadLastUser()
+        {
+            // Load the username of the last user who used the application
+            currentUsername = UserProfileManager.LoadLastUser();
+
+            // Check if a username was successfully retrieved
+            if (!string.IsNullOrEmpty(currentUsername))
+            {
+                // Load the user profile for the retrieved username
+                // If the profile does not exist, create a new one with the current username
+                currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername) ?? new UserProfile { Username = currentUsername };
+
+                // Assign the tasks and finished tasks to the current user's tasks
+                Tasks = currentUserProfile.Tasks;
+                FinishedTasks = currentUserProfile.FinishedTasks;
+    }
+            else
+            {
+                // If no username was retrieved, initialize a new user profile and empty task collections
+                currentUserProfile = new UserProfile();
+                Tasks = new ObservableCollection<TaskItem>();
+                FinishedTasks = new ObservableCollection<TaskItem>();
+            }
+            // Set the items source for the tasks and finished tasks collection views
+            TasksCollectionView.ItemsSource = Tasks;
+            FinishedTasksCollectionView.ItemsSource = FinishedTasks;
+
+            // Update the binding context to reflect the current state
+            BindingContext = this;
+        }
+
+
+
+
+        //Description: SaveCurrentUserProfile() function
+
+        //SaveCurrentUserProfile method responsible for: saving the current user's profile data 
+        //and marking the current user as the last user who used the application. 
+        //If there is a valid user profile, 
+        //it saves the profile data to a file and updates the record of the last user by 
+        //saving the current username. This ensures that when the application is reopened, the last 
+        //user's data can be retrieved and loaded.
+        private void SaveCurrentUserProfile()
+        {
+            if (currentUserProfile != null)
+            {
+                // Save the current user's profile
+                UserProfileManager.SaveUserProfile(currentUserProfile);
+
+                // Save the username of the current user as the last user
+                UserProfileManager.SaveLastUser(currentUsername);
+            }
+        }
+
+
+
+
+
+
+
+
+        //Description: OnLoadUserTasksClicked(object sender, EventArgs e) function
+
+        //The OnLoadUserTasksClicked method is triggered when the user clicks the button to load 
+        //tasks for a specific username. It first checks if the username entry is empty and displays an 
+        //error message if so. If a username is provided, it retrieves and loads the user profile for 
+        //that username, creating a new profile if none exists. It updates the task and finished task 
+        //collections and sets the item sources for the collection views to display the loaded tasks. 
+        //The method also updates the binding context to reflect the current state and saves the 
+        //current user profile, marking the current user as the last user.
+
+
+        private void OnLoadUserTasksClicked(object sender, EventArgs e)
+        {   // Check if the username entry is empty
+            if (string.IsNullOrWhiteSpace(LoadTaskUsernameEntry.Text))
+            {
+                // Display an error message if the username is empty
+                DisplayAlert("Error", "Please enter a username.", "OK");
+                return;
+            }
+            // Retrieve the entered username
+            currentUsername = LoadTaskUsernameEntry.Text;
+
+            // Load the user profile for the entered username
+            // If the profile does not exist, create a new one with the entered username
+            currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername) ?? new UserProfile { Username = currentUsername };
+
+            // Assign the tasks and finished tasks to the current user's tasks
+            Tasks = currentUserProfile.Tasks;
+            FinishedTasks = currentUserProfile.FinishedTasks;
+
+
+            // Set the items source for the tasks and finished tasks collection views
+            TasksCollectionView.ItemsSource = Tasks;
+            FinishedTasksCollectionView.ItemsSource = FinishedTasks;
+
+            // Update the binding context to reflect the current state
+            BindingContext = this;
+
+            // Save the current user profile and mark the current user as the last user
+            SaveCurrentUserProfile();
+        }
+
+
+
+
+
+
+
+
+        //Description: OnSaveUserTasksClicked(object sender, EventArgs e) function
+        
+        //The OnSaveUserTasksClicked method is triggered when the user clicks the button to save 
+        //tasks for a specific username. It checks if the username entry is empty and displays an 
+        //error message if so. If a username is provided, it retrieves the entered username and 
+        //checks if the current user profile is null or if the username has changed. If either condition 
+        //is met, it creates a new user profile with the entered username. The method then saves the 
+        //current user profile and marks the current user as the last user.
+
+
+
+        private void OnSaveUserTasksClicked(object sender, EventArgs e)
+        {
+            // Check if the username entry is empty
+            if (string.IsNullOrWhiteSpace(SaveTaskUsernameEntry.Text))
+            {
+                // Display an error message if the username is empty
+                DisplayAlert("Error", "Please enter a username.", "OK");
+                return;
+            }
+            // Retrieve the entered username
+            currentUsername = SaveTaskUsernameEntry.Text;
+
+            // Check if the current user profile is null or if the username has changed
+            if (currentUserProfile == null || currentUserProfile.Username != currentUsername)
+            {
+                // Create a new user profile with the entered username
+                currentUserProfile = new UserProfile { Username = currentUsername };
+            }
+
+            //empty the display
+
+            // Save the current user profile and mark the current user as the last user
+            SaveCurrentUserProfile();
+        }
+
     }
 
     public class UserProfile
@@ -303,6 +467,7 @@ namespace ToDo_List2
         private bool IsDone;
         private DateTime SubmissionDate;
         private string Submission_Status;
+        private bool IsOverdue;
 
 
         public int ID
@@ -347,7 +512,11 @@ namespace ToDo_List2
             set { SetProperty(ref Submission_Status, value); }
         }
 
-        public bool IsOverdue => !IsDone && Deadline < DateTime.Now;
+        public bool ISOVERDUE
+        {
+            get { return IsOverdue; }
+            set { SetProperty(ref IsOverdue, value); }
+        }
 
 
 

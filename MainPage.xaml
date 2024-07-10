@@ -79,6 +79,11 @@
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
                         <Frame BorderColor="Gray" Margin="4" BackgroundColor="green">
+                            <Frame.Triggers>
+                                <DataTrigger TargetType="Frame" Binding="{Binding SUBMISSION_STATUS }" Value="OVERDUE">
+                                    <Setter Property="BackgroundColor" Value="red" />
+                                </DataTrigger>
+                            </Frame.Triggers>
                             <StackLayout>
                                 <Label Text="{Binding TITLE}" FontAttributes="Bold" TextColor="Black" />
                                 <Label Text="{Binding DEADLINE, StringFormat='Deadline: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="Black"/>
