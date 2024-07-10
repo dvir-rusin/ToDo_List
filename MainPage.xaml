@@ -9,6 +9,10 @@
                    FontSize="Large"
                    HorizontalOptions="Center" />
 
+            <!-- User Login Section -->
+            <Entry x:Name="LoadTaskUsernameEntry" Placeholder="Enter username" />
+            <Button Text="Load User Tasks" Clicked="OnLoadUserTasksClicked" FontAttributes="Bold" />
+            
             <Entry x:Name="TitleEntry" Placeholder="Enter title" />
 
             <DatePicker x:Name="DeadlinePicker" />
@@ -37,19 +41,27 @@
                         <Frame BorderColor="Gray" Margin="4" >
                             <Frame.Triggers>
                                 <DataTrigger TargetType="Frame" Binding="{Binding PRIORITY}" Value="Low">
-                                    <Setter Property="BackgroundColor" Value="Yellow" />
+                                    <Setter Property="BackgroundColor" Value="RosyBrown" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="Frame" Binding="{Binding PRIORITY}" Value="Mid">
-                                    <Setter Property="BackgroundColor" Value="Orange" />
+                                    <Setter Property="BackgroundColor" Value="MediumPurple" />
                                 </DataTrigger>
                                 <DataTrigger TargetType="Frame" Binding="{Binding PRIORITY}" Value="High">
-                                    <Setter Property="BackgroundColor" Value="Red" />
+                                    <Setter Property="BackgroundColor" Value="DarkSlateBlue" />
                                 </DataTrigger>
+
+
+                                <DataTrigger TargetType="Frame" Binding="{Binding IsOverdue }" Value="True">
+                                <Setter Property="BackgroundColor" Value="red" />
+                                </DataTrigger>
+                                
                             </Frame.Triggers>
                             <StackLayout>
-                                <Label Text="{Binding TITLE}" FontAttributes="Bold" TextColor="Black" />
-                                <Label Text="{Binding DEADLINE, StringFormat='Deadline: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="Black"/>
-                                <Label Text="{Binding PRIORITY, StringFormat='Priority: {0}'}" FontAttributes="Bold" TextColor="Black" />
+                                <Label Text="{Binding TITLE}" FontAttributes="Bold" TextColor="White" />
+                                <Label Text="{Binding DEADLINE, StringFormat='Deadline: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="white"/>
+                                <Label Text="{Binding PRIORITY, StringFormat='Priority: {0}'}" FontAttributes="Bold" TextColor="white" />
+                                <Label Text="{Binding SUBMISSIONDATE, StringFormat='submission date: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="white"/>
+                                <Label Text="{Binding SUBMISSION_STATUS, StringFormat='submission status:{0}'}" FontAttributes="Bold" TextColor="White" />
                                 <Button Text="Delete" Clicked="OnDeleteTaskClicked" CommandParameter="{Binding .}" />
                                 <Button Text="finished" Clicked="OnFinishTaskClicked" CommandParameter="{Binding .}" />
                                 <Button Text="edit" Clicked="OnEditTaskClicked" CommandParameter="{Binding .}" />
@@ -71,6 +83,8 @@
                                 <Label Text="{Binding TITLE}" FontAttributes="Bold" TextColor="Black" />
                                 <Label Text="{Binding DEADLINE, StringFormat='Deadline: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="Black"/>
                                 <Label Text="{Binding PRIORITY, StringFormat='Priority: {0}'}" FontAttributes="Bold" TextColor="Black" />
+                                <Label Text="{Binding SUBMISSIONDATE, StringFormat='submission date: {0:MM/dd/yyyy}'}" FontAttributes="Bold" TextColor="Black"/>
+                                <Label Text="{Binding SUBMISSION_STATUS, StringFormat='submission status:{0}'}" FontAttributes="Bold" TextColor="Black" />
                                 <Button Text="Delete" Clicked="OnDeleteTaskClicked" CommandParameter="{Binding .}" />
                                 <Button Text="UnFinish" Clicked="OnUnfinishTaskClicked" CommandParameter="{Binding .}" />
                                 <Button Text="edit" Clicked="OnEditTaskClicked" CommandParameter="{Binding .}" />
@@ -80,6 +94,9 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
+            <Entry x:Name="SaveTaskUsernameEntry" Placeholder="Enter username" />
+            <Button Text="Save User Tasks" Clicked="OnSaveUserTasksClicked" FontAttributes="Bold" />
         </StackLayout>
+        
     </ScrollView>
 </ContentPage>
