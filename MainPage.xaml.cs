@@ -231,7 +231,7 @@ namespace ToDo_List2
             {
                 // Load the user profile for the retrieved username
                 // If the profile does not exist, create a new one with the current username
-                currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername) ?? new UserProfile { Username = currentUsername };
+                currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername,this) ?? new UserProfile { Username = currentUsername };
 
                 // Assign the tasks and finished tasks to the current user's tasks
                 Tasks = currentUserProfile.Tasks;
@@ -297,6 +297,7 @@ namespace ToDo_List2
         {   // Check if the username entry is empty
             if (string.IsNullOrWhiteSpace(LoadTaskUsernameEntry.Text))
             {
+
                 // Display an error message if the username is empty
                 DisplayAlert("Error", "Please enter a username.", "OK");
                 return;
@@ -306,7 +307,7 @@ namespace ToDo_List2
 
             // Load the user profile for the entered username
             // If the profile does not exist, create a new one with the entered username
-            currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername) ?? new UserProfile { Username = currentUsername };
+            currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername,this) ?? new UserProfile { Username = currentUsername };
 
             // Assign the tasks and finished tasks to the current user's tasks
             Tasks = currentUserProfile.Tasks;
@@ -365,14 +366,36 @@ namespace ToDo_List2
             {
                 // Create a new user profile with the entered username
                 currentUserProfile = new UserProfile { Username = currentUsername };
+                AlertHelper.CustomDisplayAlerts(this ,"newUser", currentUsername);
             }
 
             //empty the display
 
             // Save the current user profile and mark the current user as the last user
             SaveCurrentUserProfile();
+            AlertHelper.CustomDisplayAlerts(this, "saveChanges", currentUsername);
         }
 
+        }
+
+    //CustomDisplayAlerts function ----------------------↓↓↓
+    public static class AlertHelper
+    {
+        public static void CustomDisplayAlerts(Page page, string customMessage, string currentUsername)
+        {
+            if (customMessage.Equals("newUser"))
+            {
+                page.DisplayAlert("Success", "New user: " + currentUsername + " has been saved.", "OK");
+            }
+            else if (customMessage.Equals("failed"))
+            {
+                page.DisplayAlert("Error", "Please enter a username.", "OK");
+            }
+            else if (customMessage.Equals("saveChanges"))
+            {
+                page.DisplayAlert("Success", "New changes have been saved to: " + currentUsername + "!", "OK");
+            }
+        }
     }
 
     public class UserProfile
@@ -426,16 +449,29 @@ namespace ToDo_List2
         //returned by GetUserProfilePath and deserializes the JSON string into a UserProfile object.  
         //If the file does not exist, it returns null.
 
-        public static UserProfile LoadUserProfile(string username)
+        public static UserProfile LoadUserProfile(string username,Page page)
         {
+            bool isNewUser = true;
             string path = GetUserProfilePath(username);
             if (File.Exists(path))
             {
                 string json = File.ReadAllText(path);
+                isNewUser = false;
+                // Display an error message if the username is empty
+                
                 return JsonSerializer.Deserialize<UserProfile>(json);
             }
+            if (isNewUser)
+                // Call the alert helper with the current page instance
+                AlertHelper.CustomDisplayAlerts(page, "newUser", username);
+
+
+            //DisplayAlert("Error", "Please enter a username.", "OK");
+
             return null;
     }
+
+
 
 
 

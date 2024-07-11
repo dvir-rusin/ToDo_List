@@ -9,7 +9,7 @@ This project is meant to teach multiple things:
 
 The application includes the following features:
 
-- creating costum Tasks
+- creating custom Tasks
 
 - Option to mark tasks and sub-tasks as done or unfinished.
 
@@ -17,7 +17,7 @@ The application includes the following features:
 
 - Setting a due date for tasks
 
-- When completing a task, save the time and date of completion.
+- automaticly saves the time and date of task completion.
 
 - Option to mark tasks and sub-tasks as unfinished.
 
@@ -29,6 +29,8 @@ The application includes the following features:
 
 - When reopening the application, load the last user that was on.
 
+- add pop up messeges for loading and saving tasks / profiles 
+
 While creating the application, the following points were taken into account:
 The application should look usable and have a decent user experience (UI/UX).
 Maintain clean code and a good project structure, improving over time.
@@ -37,9 +39,10 @@ Maintain clean code and a good project structure, improving over time.
  
 -  Sub - tasks
 
-- Option to mark tasks and sub-tasks as unfinished.
 
-- marking tasks as overdue when the due date has passed.
+
+
+
 
 - Ability to save and load tasks per user to files (profiles/users).
 

@@ -25,11 +25,17 @@
 
             <!-- deadline picker and text label -->
             <Label Text="pick you deadline"
-                   FontSize="Medium" />
-            <DatePicker x:Name="DeadlinePicker" Scale="1.2" Margin="4"  />
+                   FontSize="Medium"
+                   Margin="4"/>
+            <DatePicker x:Name="DeadlinePicker" Scale="1" Margin="4" FontAttributes="Bold"  />
 
             <!-- priority label and selection -->
-            <Picker x:Name="PriorityPicker" Title="Select task Priority" FontSize="Medium" Margin="4">
+            <Label Text="Select task Priority"
+                   FontSize="Medium"
+                   Margin="4"/>
+            <Picker x:Name="PriorityPicker"  
+                    Margin="4"
+                    FontAttributes="Bold">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>Low</x:String>
@@ -40,7 +46,7 @@
             </Picker>
 
             <!-- add task button -->
-            <Button Text="Add Task" Clicked="OnAddTaskClicked" FontAttributes="Bold" />
+            <Button Text="Add Task" Clicked="OnAddTaskClicked" FontAttributes="Bold" Margin="4" />
             
 
             <!-- tasks collection label -->
