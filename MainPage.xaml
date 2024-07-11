@@ -4,20 +4,32 @@
              x:Class="ToDo_List2.MainPage">
 
     <ScrollView>
-        <StackLayout Padding="20">
-            <Label Text="To-Do List"
+        <StackLayout Padding="20"  >
+
+
+            <!-- TODO list label-->
+            <Label x:Name="TitleLabel" Text= "{Binding DYNAMICTITLE, StringFormat='{0} To-Do List '}"
                    FontSize="Large"
-                   HorizontalOptions="Center" />
+                   HorizontalOptions="Center"
+                   TextColor="White"/> 
+
+
 
             <!-- User Login Section -->
-            <Entry x:Name="LoadTaskUsernameEntry" Placeholder="Enter username" />
-            <Button Text="Load User Tasks" Clicked="OnLoadUserTasksClicked" FontAttributes="Bold" />
+            <!-- button and  textfield -->
+            <Entry x:Name="LoadTaskUsernameEntry" Placeholder="Enter username to load tasks from " TextColor="White"  Margin="4"/>
+            <Button Text="Load User Tasks" Clicked="OnLoadUserTasksClicked" FontAttributes="Bold"  Margin="4"/>
             
-            <Entry x:Name="TitleEntry" Placeholder="Enter title" />
+            <!-- task title textfield -->
+            <Entry x:Name="TitleEntry" Placeholder="Enter task title"  Margin="4" />
 
-            <DatePicker x:Name="DeadlinePicker" />
+            <!-- deadline picker and text label -->
+            <Label Text="pick you deadline"
+                   FontSize="Medium" />
+            <DatePicker x:Name="DeadlinePicker" Scale="1.2" Margin="4"  />
 
-            <Picker x:Name="PriorityPicker" Title="Select Priority">
+            <!-- priority label and selection -->
+            <Picker x:Name="PriorityPicker" Title="Select task Priority" FontSize="Medium" Margin="4">
                 <Picker.ItemsSource>
                     <x:Array Type="{x:Type x:String}">
                         <x:String>Low</x:String>
@@ -27,14 +39,16 @@
                 </Picker.ItemsSource>
             </Picker>
 
+            <!-- add task button -->
             <Button Text="Add Task" Clicked="OnAddTaskClicked" FontAttributes="Bold" />
             
 
-
+            <!-- tasks collection label -->
             <Label Text="Tasks"
                    FontSize="Medium"
-                   HorizontalOptions="Center" />
+                   HorizontalOptions="Center" Margin="4" />
 
+            <!-- task collectionview settings -->
             <CollectionView x:Name="TasksCollectionView" ItemsSource="{Binding Task}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -75,6 +89,8 @@
                    FontSize="Medium"
                    HorizontalOptions="Center" />
 
+
+            <!-- finished tasks collectionview settings -->
             <CollectionView x:Name="FinishedTasksCollectionView" ItemsSource="{Binding FinishedTasks}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
@@ -99,8 +115,11 @@
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
-            <Entry x:Name="SaveTaskUsernameEntry" Placeholder="Enter username" />
-            <Button Text="Save User Tasks" Clicked="OnSaveUserTasksClicked" FontAttributes="Bold" />
+
+
+            <!-- save user tasks textfield and button -->
+            <Entry x:Name="SaveTaskUsernameEntry" Placeholder="Enter username to save the current tasks for"  Margin="4"/>
+            <Button Text="Save User Tasks" Clicked="OnSaveUserTasksClicked" FontAttributes="Bold" Margin="4" />
         </StackLayout>
         
     </ScrollView>

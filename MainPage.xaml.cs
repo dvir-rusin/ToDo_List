@@ -38,10 +38,10 @@ namespace ToDo_List2
             TasksCollectionView.ItemsSource = Tasks;
             FinishedTasksCollectionView.ItemsSource = FinishedTasks;
 
+            TodolistTitle Title = new TodolistTitle();
+            Title.DYNAMICTITLE = UserProfileManager.LoadLastUser() != null ? UserProfileManager.LoadLastUser() : "Empty";
 
-            BindingContext= this;
-            LoadLastUser();
-        }
+            TitleLabel.BindingContext = Title; // Set the BindingContext for the TitleLabel
 
         private void LoadLastUser()
         {
@@ -62,47 +62,7 @@ namespace ToDo_List2
             TasksCollectionView.ItemsSource = Tasks;
             FinishedTasksCollectionView.ItemsSource = FinishedTasks;
             BindingContext = this;
-        }
-
-
-        private void SaveCurrentUserProfile()
-        {
-            if (currentUserProfile != null)
-            {
-                UserProfileManager.SaveUserProfile(currentUserProfile);
-                UserProfileManager.SaveLastUser(currentUsername);
-            }
-        }
-
-        private void OnLoadUserTasksClicked(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(LoadTaskUsernameEntry.Text))
-            {
-                DisplayAlert("Error", "Please enter a username.", "OK");
-                return;
-            }
-
-            currentUsername = LoadTaskUsernameEntry.Text;
-            currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername) ?? new UserProfile { Username = currentUsername };
-
-            Tasks = currentUserProfile.Tasks;
-            FinishedTasks = currentUserProfile.FinishedTasks;
-
-            TasksCollectionView.ItemsSource = Tasks;
-            FinishedTasksCollectionView.ItemsSource = FinishedTasks;
-            BindingContext = this;
-
-            
-            SaveCurrentUserProfile();
-        }
-
-        private void OnSaveUserTasksClicked(object sender, EventArgs e)
-        {
-            if (string.IsNullOrWhiteSpace(SaveTaskUsernameEntry.Text))
-            {
-                DisplayAlert("Error", "Please enter a username.", "OK");
-                return;
-            }
+            LoadLastUser();
 
             currentUsername = SaveTaskUsernameEntry.Text;
             if (currentUserProfile == null || currentUserProfile.Username != currentUsername)
@@ -362,6 +322,12 @@ namespace ToDo_List2
 
             // Save the current user profile and mark the current user as the last user
             SaveCurrentUserProfile();
+
+            // Update the binding context to reflect the current state
+
+            TodolistTitle Title = new TodolistTitle();
+            Title.DYNAMICTITLE = UserProfileManager.LoadLastUser() != null ? UserProfileManager.LoadLastUser() : "Empty";
+            TitleLabel.BindingContext = Title;
         }
 
 
@@ -424,14 +390,41 @@ namespace ToDo_List2
 
     public static class UserProfileManager
     {
-        private static string GetUserProfilePath(string username)
+
+
+        // GetUserProfilePath(string username):
+
+        //constructs the file path for a user's profile based on their username.
+        // It combines the application data directory path with the username and a .
+        //json extension to create a unique file path for each user's profile.
+
+        private static string GetUserProfilePath(string username)//return a full path for the username entered
             => Path.Combine(FileSystem.Current.AppDataDirectory, $"{username}.json");
+
+
+
+
+        //Description: SaveUserProfile(UserProfile profile)
+
+        //This method saves a user's profile to a JSON file.
+        //It serializes the UserProfile object(Username, Tasks, FinishedTasks) into a 
+        //JSON string and writes it to a file located at the path returned by GetUserProfilePath. ↑↑↑
 
         public static void SaveUserProfile(UserProfile profile)
         {
             string json = JsonSerializer.Serialize(profile);
             File.WriteAllText(GetUserProfilePath(profile.Username), json);
         }
+
+
+
+
+
+        //Description: LoadUserProfile(string username) function
+
+        //This method loads a user's profile from a JSON file. It reads the file content from the path 
+        //returned by GetUserProfilePath and deserializes the JSON string into a UserProfile object.  
+        //If the file does not exist, it returns null.
 
         public static UserProfile LoadUserProfile(string username)
         {
@@ -444,10 +437,31 @@ namespace ToDo_List2
             return null;
     }
 
+
+
+
+        //Description: SaveLastUser(string username)
+
+        //This method saves the username of the last user who used the application to a text file 
+        //named lastUser.txt in the application data directory. This allows the application to remember 
+        //the last user for future sessions.
+
+
         public static void SaveLastUser(string username)
         {
             File.WriteAllText(Path.Combine(FileSystem.Current.AppDataDirectory, "lastUser.txt"), username);
         }
+
+
+
+
+
+
+        //Description: LoadLastUser() function
+
+        //This method loads the username of the last user who used the application from a text file 
+        //named lastUser.txt in the application data directory. If the file exists, it reads and returns the 
+        //username. If the file does not exist, it returns null.
 
         public static string LoadLastUser()
         {
@@ -456,7 +470,9 @@ namespace ToDo_List2
         }
     }
 
-    //created TaskItem(ID ,TITLE,DEADLINE,PRIORITY,ISDONE)
+
+
+
 
     public class TaskItem : ObservableObject
     {
@@ -517,8 +533,15 @@ namespace ToDo_List2
             get { return IsOverdue; }
             set { SetProperty(ref IsOverdue, value); }
         }
+    }
+    public class TodolistTitle : ObservableObject
+    {
+        private string dynamicTitle;
 
-
-
+        public string DYNAMICTITLE
+        {
+            get { return dynamicTitle; }
+            set { SetProperty(ref dynamicTitle, value); }
+        }
     }
 }
