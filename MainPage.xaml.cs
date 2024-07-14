@@ -6,7 +6,6 @@ using System.Diagnostics.Metrics;
 using System.Text.Json;
 using System.IO;
 
-
 namespace ToDo_List2
 {
     public partial class MainPage : ContentPage
@@ -19,14 +18,10 @@ namespace ToDo_List2
         public ObservableCollection<TaskItem> Tasks { get; set; }//UNFINISHED TASKS LIST
         public ObservableCollection<TaskItem> FinishedTasks { get; set; }//FINISHED TASKS LIST
 
-        CollectionView collectionView = new CollectionView();
         
-        public MainPage()
 
-        {
             
         public MainPage()
-            
         {
             var button = new Button();
             var task = new TaskItem();
@@ -43,36 +38,10 @@ namespace ToDo_List2
 
             TitleLabel.BindingContext = Title; // Set the BindingContext for the TitleLabel
 
-        private void LoadLastUser()
-        {
-            currentUsername = UserProfileManager.LoadLastUser();
-            if (!string.IsNullOrEmpty(currentUsername))
-            {
-                currentUserProfile = UserProfileManager.LoadUserProfile(currentUsername) ?? new UserProfile { Username = currentUsername };
-                Tasks = currentUserProfile.Tasks;
-                FinishedTasks = currentUserProfile.FinishedTasks;
-            }
-            else
-            {
-                currentUserProfile = new UserProfile();
-                Tasks = new ObservableCollection<TaskItem>();
-                FinishedTasks = new ObservableCollection<TaskItem>();
-            }
-
-            TasksCollectionView.ItemsSource = Tasks;
-            FinishedTasksCollectionView.ItemsSource = FinishedTasks;
             BindingContext = this;
             LoadLastUser();
 
-            currentUsername = SaveTaskUsernameEntry.Text;
-            if (currentUserProfile == null || currentUserProfile.Username != currentUsername)
-            {
-                currentUserProfile = new UserProfile { Username = currentUsername };
-            }
 
-            //empty the display
-            
-            SaveCurrentUserProfile();
         }
 
         private void OnAddTaskClicked(object sender, EventArgs e)//add task
@@ -144,20 +113,23 @@ namespace ToDo_List2
             }
       
         private void OnFinishTaskClicked(object sender, EventArgs e)
-                    {
+        { //sends to UpdateTaskStatus(task, isfinished=true);
             var button = (Button)sender;
             var task = (TaskItem)button.CommandParameter;
             UpdateTaskStatus(task, true);
         }
 
         private void OnUnfinishTaskClicked(object sender, EventArgs e)
-        {
+        { //sends to UpdateTaskStatus(task, isfinished=false);
             var button = (Button)sender;
             var task = (TaskItem)button.CommandParameter;
             UpdateTaskStatus(task, false);
         }
-
-
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void OnEditTaskClicked(object sender, EventArgs e)
         {
             //ERROR check
