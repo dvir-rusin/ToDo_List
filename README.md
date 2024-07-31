@@ -31,13 +31,9 @@ The application includes the following features:
 
 - add pop up messeges for loading and saving tasks / profiles 
 
-While creating the application, the following points were taken into account:
-The application should look usable and have a decent user experience (UI/UX).
-Maintain clean code and a good project structure, improving over time.
 
- things currently missing:
- 
--  Sub - tasks
+
+![ToDo-List](https://github.com/user-attachments/assets/836f6184-a08d-48b2-9c2d-28fce68d7403)
 
 
 
